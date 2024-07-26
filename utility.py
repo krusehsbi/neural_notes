@@ -1,10 +1,28 @@
 import numpy as np
 
 # Function to normalize data to the range 0-127
-def normalize(data):
-    min_val = np.min(data)
-    max_val = np.max(data)
-    return [int((value - min_val) / (max_val - min_val) * 127) for value in data]
+def normalize(data, new_min=0, new_max=127):
+    """
+    Normalize a 2D list of EEG data to a new range [new_min, new_max].
+
+    Args:
+    - data (list of lists): 2D list of EEG values.
+    - new_min (int, optional): The minimum value of the normalized range. Defaults to 0.
+    - new_max (int, optional): The maximum value of the normalized range. Defaults to 127.
+
+    Returns:
+    - list of lists: Normalized EEG data in the new range.
+    """
+    flattened_data = np.array(data).flatten()
+    old_min, old_max = np.min(flattened_data), np.max(flattened_data)
+    
+    if old_max == old_min:
+        return np.full(flattened_data.shape, new_min).tolist()
+    
+    normalized_data = (flattened_data - old_min) / (old_max - old_min) * (new_max - new_min) + new_min
+    return normalized_data.tolist()
+
+
 
 def getNoteMinor(eegData, base, start, end, octaves):
     """
